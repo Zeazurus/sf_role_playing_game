@@ -18,7 +18,8 @@ public class Main {
                     1. К торговцу
                     2. В тёмный лес
                     3. Проверить характеристики
-                    4. На выход""");
+                    4. Отдохнуть у костра
+                    5. На выход""");
 
             switch (in.next()) {
                 case "1" -> World.playerGoMerchant();
@@ -34,7 +35,8 @@ public class Main {
                     } while (in.next().equals("да"));
                 }
                 case "3" -> System.out.println(World.player.toString());
-                case "4" -> isExiting = true;
+                case "4" -> World.playerGoChill();
+                case "5" -> isExiting = true;
                 default -> System.out.println("Вы путаетесь в мыслях и не знаете куда пойти...");
             }
         }

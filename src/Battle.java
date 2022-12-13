@@ -70,14 +70,14 @@ public class Battle {
     private static Entity makeHit(Entity attacker, Entity defender) {
         //Удар
         System.out.println(attacker.name + " нападает на " + defender.name);
-        if (doDodge(defender.dexterity)) {
+        if (doDodge(defender.getDexterity())) {
             //Пока не попадем по Монстру, мы не узнаем сколько у него здоровья
             System.out.println(defender.name + " уклонился!");
         }
         //Подведение итогов
         else {
-            System.out.println("И наносит " + attacker.strength + " урона!");
-            if (defender.setCurrentHealth(defender.getCurrentHealth() - attacker.strength)) {
+            System.out.println("И наносит " + attacker.getStrength() + " урона!");
+            if (defender.setCurrentHealth(defender.getCurrentHealth() - attacker.getStrength())) {
                 System.out.println("У " + defender.name + " осталось " + defender.getCurrentHealth() + " здоровья!");
             }
             else {

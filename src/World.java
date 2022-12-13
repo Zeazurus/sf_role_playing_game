@@ -27,6 +27,11 @@ public class World {
         }
     }
 
+    private static void playerLooting(Monster monster) {
+        player.gainExperience(monster);
+        player.setGold(monster);
+    }
+
     public static void playerGoMerchant() {
         System.out.println("Торговца нет на месте. Ждем торговца?");
         Scanner in = new Scanner(System.in);
@@ -36,19 +41,34 @@ public class World {
         System.out.println("Вы уходите.");
     }
 
-    private static Monster createMonster() {
-        Random random = new Random();
-        int fullHealthEnemy = random.nextInt(player.fullHealth / 2, player.fullHealth);
-        return new Monster(fullHealthEnemy,
-                random.nextInt(fullHealthEnemy / 2, fullHealthEnemy),
-                random.nextInt(player.strength / 2, player.strength),
-                random.nextInt(player.dexterity / 2, player.dexterity),
-                enemies[random.nextInt(2)],
-                random.nextInt(1, fullHealthEnemy));
+    public static void playerGoChill() {
+        if (player.getAbilityPoints() != 0) {
+            System.out.println("У вас есть нераспределенные очки способностей.");
+            Scanner in = new Scanner(System.in);
+
+            while (player.getAbilityPoints() != 0) {
+                System.out.println("""
+                    \nЧто вы желаете улучшить?
+                    1. Здоровье +1
+                    2. Сила +1
+                    3. Ловкость +1
+                    4. Я передумал""");
+                player.spendAbilityPoints(in.next());
+            }
+        }
+
+        player.setCurrentHealth(player.getFullHealth());
+        System.out.println("Вы восполнили жизненные силы!");
     }
 
-    private static void playerLooting(Monster monster) {
-        player.setExperience(monster);
-        player.setGold(monster);
+    private static Monster createMonster() {
+        Random random = new Random();
+        int fullHealthEnemy = random.nextInt(player.getFullHealth() / 2, player.getFullHealth());
+        return new Monster(fullHealthEnemy,
+                random.nextInt(fullHealthEnemy / 2, fullHealthEnemy),
+                random.nextInt(player.getStrength() / 2, player.getStrength()),
+                random.nextInt(player.getDexterity() / 2, player.getDexterity()),
+                enemies[random.nextInt(2)],
+                random.nextInt(1, fullHealthEnemy));
     }
 }
