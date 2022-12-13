@@ -15,7 +15,7 @@ public class Battle {
                 firstEntity %= 2;
                 int secondEntity = (firstEntity + 1) % 2;
 
-                lambdaContext.winner = makeHit(entities[firstEntity], entities[secondEntity]);
+                lambdaContext.winner = startHitting(entities[firstEntity], entities[secondEntity]);
                 if (lambdaContext.winner != null) {
                     System.out.println("\nБОЙ ОКОНЧЕН!\n");
                     break;
@@ -67,30 +67,49 @@ public class Battle {
         return lambdaContext.winner;
     }
 
-    private static Entity makeHit(Entity attacker, Entity defender) {
-        //Удар
+    private static Entity startHitting(Entity attacker, Entity defender) {
         System.out.println(attacker.name + " нападает на " + defender.name);
+        //Уклонение
         if (doDodge(defender.getDexterity())) {
             //Пока не попадем по Монстру, мы не узнаем сколько у него здоровья
             System.out.println(defender.name + " уклонился!");
+            return null;
         }
-        //Подведение итогов
-        else {
-            System.out.println("И наносит " + attacker.getStrength() + " урона!");
-            if (defender.setCurrentHealth(defender.getCurrentHealth() - attacker.getStrength())) {
-                System.out.println("У " + defender.name + " осталось " + defender.getCurrentHealth() + " здоровья!");
-            }
-            else {
-                return attacker;
-            }
+        //Критический удар
+        else return hit(attacker, defender, doCriticalStrike());
+    }
+
+    private static Entity hit(Entity attacker, Entity defender, boolean isCriticalStrike) {
+        //Критический удар
+        String hitClassification = "";
+        int hitMultiplier = 1;
+
+        if (isCriticalStrike) {
+            hitClassification = "КРИТИЧЕСКОГО";
+            hitMultiplier = 2;
         }
 
-        return null;
+        //Удар
+        int damage = attacker.getStrength() * hitMultiplier;
+        System.out.println("И наносит " + hitClassification + " " + damage + " урона!");
+        if (defender.setCurrentHealth(defender.getCurrentHealth() - damage)) {
+            System.out.println("У " + defender.name + " осталось " + defender.getCurrentHealth() + " здоровья!");
+            return null;
+        }
+        else {
+            //Если убил
+            return attacker;
+        }
     }
 
     private static boolean doDodge(int dexterity) {
         Random random = new Random();
         return dexterity * 3 > random.nextInt(100);
+    }
+
+    private static boolean doCriticalStrike() {
+        Random random = new Random();
+        return 5 > random.nextInt(100);
     }
 
     /*private static void getFightInfo(Entity[] entities) {
