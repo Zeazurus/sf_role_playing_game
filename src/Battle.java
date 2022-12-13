@@ -11,15 +11,26 @@ public class Battle {
 
         System.out.println("БОЙ НАЧИНАЕТСЯ");
         Runnable runnable = () -> {
-            for (int firstEntity = 0; ; firstEntity++) {
+            int firstEntity = 0;
+            for (int i = 1; ; i++) {
                 firstEntity %= 2;
                 int secondEntity = (firstEntity + 1) % 2;
 
+                //Замедляет выдачу, чтобы бой не выглядел пулеметной очередью
+                try {
+                    Thread.sleep(3000);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+
+                System.out.println("===== Ход " + i + " =====");
                 lambdaContext.winner = startHitting(entities[firstEntity], entities[secondEntity]);
                 if (lambdaContext.winner != null) {
                     System.out.println("\nБОЙ ОКОНЧЕН!\n");
                     break;
                 }
+
+                firstEntity++;
             }
         };
 
