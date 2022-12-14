@@ -29,16 +29,44 @@ public class World {
 
     private static void playerLooting(Monster monster) {
         player.gainExperience(monster);
-        player.setGold(monster);
+        player.earnGold(monster);
     }
 
     public static void playerGoMerchant() {
-        System.out.println("Торговца нет на месте. Ждем торговца?");
+        System.out.println("""
+                Добро пожаловать в мою лавку!
+                Посмотри нам мои восстанавливающие зелья!
+                Они восстанавливают половину здоровья и стоят всего 10 золота!
+                Ну что берешь?""");
+
+        Scanner in = new Scanner(System.in);
+        Merchant merchant = new Merchant();
+        if (in.next().equals("да")) {
+            String answer;
+            while (true) {
+                System.out.println("Сколько возьмешь?");
+                answer = in.next();
+                try {
+                    if (answer.equals("уйти")) break;
+                    else if (merchant.sell(player, Integer.parseInt(answer))) {
+                        System.out.println("Вот твои зелья. Счастливой дороги, путник!");
+                        break;
+                    }
+                    else System.out.println("Не, так дела не пойдут... Ты всегда можешь 'уйти' и придти, когда у тебя будет золото.");
+                } catch (NumberFormatException e) {
+                    System.out.println("Торговец косо смотрит на вас.");
+                }
+            }
+        }
+
+        System.out.println("Вы уходите..");
+
+        /*System.out.println("Торговца нет на месте. Ждем торговца?");
         Scanner in = new Scanner(System.in);
         while (in.next().equals("да")) {
             System.out.println("Прошло 5 минут... Ждем дальше?");
         }
-        System.out.println("Вы уходите.");
+        System.out.println("Вы уходите.");*/
     }
 
     public static void playerGoChill() {
@@ -57,7 +85,7 @@ public class World {
             }
         }
 
-        player.setCurrentHealth(player.getFullHealth());
+        player.setCurrentHealth(player.getFullHealth() - player.getCurrentHealth());
         System.out.println("Вы восполнили жизненные силы!");
     }
 

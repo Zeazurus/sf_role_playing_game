@@ -1,11 +1,17 @@
 import java.util.Random;
+import java.util.Scanner;
 
 public class Battle {
-    public static Entity fight(Entity attacker, Entity defender) {
+    public static Entity fight(Player attacker, Entity defender) {
+        //Для действия в бою
+        Scanner in = new Scanner(System.in);
+
+        //Определение победителя
         var lambdaContext = new Object() {
             Entity winner = null;
         };
 
+        //Чередуем атакующих и защитников
         Entity[] entities = new Entity[] { attacker, defender };
         //getFightInfo(entities);
 
@@ -18,12 +24,26 @@ public class Battle {
 
                 //Замедляет выдачу, чтобы бой не выглядел пулеметной очередью
                 try {
-                    Thread.sleep(3000);
+                    Thread.sleep(1000);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
 
                 System.out.println("===== Ход " + i + " =====");
+                if (entities[firstEntity].equals(attacker) &&
+                        attacker.getCurrentHealth() <= attacker.getFullHealth() / 2 &&
+                        attacker.getHealPotions() > 0) {
+
+                    System.out.println("Хотите использовать зелье лечения? У вас " + attacker.getCurrentHealth() + " здоровья!");
+                    if (in.next().equals("да")) {
+                        attacker.setCurrentHealth(attacker.getFullHealth() / 2);
+                        attacker.setHealPotions(-1);
+                        System.out.println("У вас осталось зелий - " + attacker.getHealPotions());
+                        firstEntity++;
+                        continue;
+                    }
+                }
+
                 lambdaContext.winner = startHitting(entities[firstEntity], entities[secondEntity]);
                 if (lambdaContext.winner != null) {
                     System.out.println("\nБОЙ ОКОНЧЕН!\n");
@@ -36,39 +56,6 @@ public class Battle {
 
         Thread thread = new Thread(runnable);
         thread.start();
-
-        /*while(attacker.getCurrentHealth() >= 0 || defender.getCurrentHealth() >= 0)
-        {
-            //Игрок нападает на Монстра
-            System.out.println("Нападаем на Монстра");
-            if (doDodge(defender.dexterity)) {
-                //Пока не попадем по Монстру, мы не узнаем сколько у него здоровья
-                System.out.println("Монстр уклонился!");
-            }
-            else {
-                if (defender.setCurrentHealth(defender.getCurrentHealth() - attacker.strength))
-                    System.out.println("У монстра осталось " + defender.getCurrentHealth() + " здоровья!");
-                else {
-                    winner = attacker;
-                    break;
-                }
-            }
-
-            //Монстр нападает на игрока
-            System.out.println("Монстр атакует вас!");
-            if (doDodge(attacker.dexterity)) {
-                //Пока не попадем по Монстру, мы не узнаем сколько у него здоровья
-                System.out.println("Вы уклонились!");
-            }
-            else {
-                if (attacker.setCurrentHealth(attacker.getCurrentHealth() - defender.strength))
-                    System.out.println("У вас осталось " + attacker.getCurrentHealth() + " здоровья!");
-                else {
-                    winner = defender;
-                    break;
-                }
-            }
-        }*/
 
         try {
             thread.join();
@@ -103,7 +90,7 @@ public class Battle {
         //Удар
         int damage = attacker.getStrength() * hitMultiplier;
         System.out.println("И наносит " + hitClassification + " " + damage + " урона!");
-        if (defender.setCurrentHealth(defender.getCurrentHealth() - damage)) {
+        if (defender.setCurrentHealth(-damage)) {
             System.out.println("У " + defender.name + " осталось " + defender.getCurrentHealth() + " здоровья!");
             return null;
         }

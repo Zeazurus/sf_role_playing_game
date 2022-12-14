@@ -1,3 +1,5 @@
+import java.util.Objects;
+
 public abstract class Entity extends Evolution {
     String name;
     private int currentHealth, fullHealth, strength, dexterity;
@@ -53,7 +55,7 @@ public abstract class Entity extends Evolution {
     }
 
     public boolean setCurrentHealth(int currentHealth) {
-        this.currentHealth = currentHealth;
+        this.currentHealth += currentHealth;
 
         return this.currentHealth > 0;
     }
@@ -72,5 +74,18 @@ public abstract class Entity extends Evolution {
                 "\nСила=" + strength +
                 "\nЛовкость=" + dexterity +
                 super.toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Entity entity = (Entity) o;
+        return currentHealth == entity.currentHealth && fullHealth == entity.fullHealth && strength == entity.strength && dexterity == entity.dexterity && name.equals(entity.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, currentHealth, fullHealth, strength, dexterity);
     }
 }

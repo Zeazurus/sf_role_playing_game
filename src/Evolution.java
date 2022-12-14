@@ -20,9 +20,9 @@ public abstract class Evolution {
 
     public void setExperience(int experience) {
         this.experience += experience;
-        if (this.experience >= 100 * level) {
+        if (this.experience >= (100 * level)) {
             this.setLevel(1);
-            this.experience %= 100 * level;
+            this.experience = experience % (100 * level);
         }
 
     }
